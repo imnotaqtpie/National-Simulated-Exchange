@@ -1,6 +1,7 @@
 import socket
 import pickle
 import os
+import signal 
 
 class BookListener:
 	def __init__(self, host, port, file_path):
@@ -8,7 +9,7 @@ class BookListener:
 		self._port = port
 		self._sock = self._setup_socket_for_listen()
 		try:
-			self._file = open(file_path, 'a+')
+			self._file = open(file_path, 'w+')
 		except:
 			raise Exception('Invalid file path')
 
@@ -26,19 +27,22 @@ class BookListener:
 			if data:
 				print('writing data')
 				self.data_handler(data)
+		signal.signal(signal.SIGINT, KeyboardInterruptHandler)
 
 	def data_handler(self, data):
 		try:
-			self._file.writelines(str(pickle.loads(data)))
+			self._file.writelines(str(pickle.loads(data)) + '\n')
+			self._file.flush()
 			print('wrote stuff')
 		except Exception as e:
 			print(e)
 		return True
 
-	def __del__(self):
+	def KeyboardInterruptHandler(self):
 		self._sock.close()
 		self._file.flush()
 		self._file.close()
+		exit(0)
 
 if __name__ == '__main__':
 	file_path = 'D:\\genericbacktesters\\book_data\\file.dat'

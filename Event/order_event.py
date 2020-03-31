@@ -1,14 +1,4 @@
-import time 
-from enum import Enum
-
-class Direction(Enum):
-	LONG = 1
-	SHORT = -1
-
-class Event:
-	def __init__(self, sender_id):
-		self._sender_id = sender_id
-		self._time_stamp = time.time()
+from Event.event import Event 
 
 class OrderEvent(Event):
 	def __init__(self, player_id, order_type, symbol=None, price=None, direction=None, quantity=None, order_id=None):
@@ -44,24 +34,3 @@ class OrderEvent(Event):
 		else:
 			return False
 		return True
-
-class ExchangeOrderEvent(Event):
-	def __init__(self, sender_id, status, order_id=None, message=None):
-		Event.__init__(self, sender_id)
-		self._order_id = order_id
-		self._status = status
-		self._message = message
-
-class PlayerRegistrationEvent(Event):
-	def __init__(self, player_name, player_id=None):
-		Event.__init__(self, player_id)
-		self._event_type = 'REGISTER'
-		self._player_name = player_name
-
-class ExchangeRegistrationEvent(Event):
-	def __init__(self, exchange_id, status, player_id=None, message=None):
-		Event.__init__(self, exchange_id)
-		self._event_type = 'REGISTER'
-		self._status = status
-		self._player_id = player_id
-		self._message = message
